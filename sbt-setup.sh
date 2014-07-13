@@ -12,7 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#!/bin/sh -euv
+#!/bin/bash
+
+set -e
+set -u
+set -v
 
 cat > $TRAVIS_BUILD_DIR/ci/ivy.credentials <<EOF
 realm=Artifactory Realm

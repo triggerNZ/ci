@@ -12,7 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#!/bin/bash -euv
+#!/bin/bash
+
+set -e
+set -u
+set -v
 
 function get_version() {
     local branch=$TRAVIS_BRANCH

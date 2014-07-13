@@ -12,7 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#!/bin/bash -euv
+#!/bin/bash
+
+set -e
+set -u
+set -v
 
 if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then
     if [ $# -eq 0 ]; then

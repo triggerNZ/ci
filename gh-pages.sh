@@ -12,7 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#!/bin/sh -euv
+#!/bin/bash
+
+set -e
+set -u
+set -v
 
 echo "releaseVersion: `grep VERSION ../VERSION.txt | cut -d '=' -f 2`" >> _config.yml
 
