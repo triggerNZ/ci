@@ -18,6 +18,7 @@ set -e
 set -u
 set -v
 
+
 version=$(grep "version" version.sbt | cut -d'=' -f 2)
 
 echo "" >> src/site/_config.yml
@@ -26,19 +27,24 @@ echo "releaseVersion: $version" >> src/site/_config.yml
 echo "Creating site"
 sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci make-site
 
-git config --global user.email "omnia-bamboo"
-git config --global user.name "Travis"
+# Only update gh-pages if we are on master.
+if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then  
+    git config --global user.email "omnia-bamboo"
+    git config --global user.name "Travis"
 
-echo "Cloning gh-pages"
-git clone -b gh-pages https://omnia-bamboo:$GH_PASSWORD@github.com/$TRAVIS_REPO_SLUG.git target/gh-pages
+    echo "Cloning gh-pages"
+    git clone -b gh-pages https://omnia-bamboo:$GH_PASSWORD@github.com/$TRAVIS_REPO_SLUG.git target/gh-pages
 
-cd ./target/gh-pages
-git rm -r -f --ignore-unmatch *
-cp -r ../site/* .
-
-git add .
-git commit -m "Updated site"
-echo "Pushing site to gh-pages"
-git push --quiet https://omnia-bamboo:$GH_PASSWORD@github.com/$TRAVIS_REPO_SLUG.git gh-pages
-cd ..
-rm -rf gh-pages
+    cd ./target/gh-pages
+    git rm -r -f --ignore-unmatch *
+    cp -r ../site/* .
+  
+    git add .
+    git commit -m "Updated site"
+    echo "Pushing site to gh-pages"
+    git push --quiet https://omnia-bamboo:$GH_PASSWORD@github.com/$TRAVIS_REPO_SLUG.git gh-pages
+    cd ..
+    rm -rf gh-pages
+else
+    echo "Not on master. Not updating docs."
+fi
