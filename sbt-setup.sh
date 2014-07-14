@@ -15,8 +15,12 @@
 #!/bin/bash
 
 set -e
-set -u
 set -v
+
+# Only require that the ARTIFACTORY_PASSWORD is set on master to enable PR.
+if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then
+    set -u
+fi;
 
 cat > $TRAVIS_BUILD_DIR/ci/ivy.credentials <<EOF
 realm=Artifactory Realm

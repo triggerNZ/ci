@@ -15,7 +15,6 @@
 #!/bin/bash
 
 set -e
-set -u
 set -v
 
 
@@ -28,7 +27,9 @@ echo "Creating site"
 sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci make-site
 
 # Only update gh-pages if we are on master.
-if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then  
+if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then
+    set -u
+
     git config --global user.email "omnia-bamboo"
     git config --global user.name "Travis"
 
