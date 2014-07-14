@@ -18,7 +18,10 @@ set -e
 set -u
 set -v
 
-echo "releaseVersion: `grep VERSION ../VERSION.txt | cut -d '=' -f 2`" >> _config.yml
+version=$(grep "version" version.sbt | cut -d'=' -f 2)
+
+echo "" >> src/site/_config.yml
+echo "releaseVersion: $version" >> src/site/_config.yml
 
 echo "Creating site"
 sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci make-site
@@ -27,7 +30,7 @@ git config --global user.email "omnia-bamboo"
 git config --global user.name "Travis"
 
 echo "Cloning gh-pages"
-git clone -b gh-pages https://omnia-bamboo:$GH_PASSWORD@github.com/$TRAVIS_REPO_SLUG.git ./target/gh-pages
+git clone -b gh-pages https://omnia-bamboo:$GH_PASSWORD@github.com/$TRAVIS_REPO_SLUG.git target/gh-pages
 
 cd ./target/gh-pages
 git rm -r -f --ignore-unmatch *
