@@ -24,11 +24,11 @@ function get_version() {
     local commish=`git rev-parse --short HEAD`
     local version="$1-$ts-$commish"
     if [ $TRAVIS_PULL_REQUEST != "false" ]; then
-        echo "PR$TRAVIS_PULL_REQUEST-$version"
+        echo "$version-PR$TRAVIS_PULL_REQUEST"
     elif [ $TRAVIS_BRANCH == "master" ]; then
         echo "$version"
     else
-        echo "$branch-$version"
+        echo "$version-$branch"
     fi
 }
 
