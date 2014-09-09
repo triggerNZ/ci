@@ -33,7 +33,7 @@ function get_version() {
 }
 
 if [ -f version.sbt ]; then
-    version=`grep -E -o "[0-9]*\.[0-9]*\.[0-9]*" version.sbt`
+    version=`grep -E -o "[0-9]+\.[0-9]+\.[0-9]+" version.sbt`
     echo $version
     new_version=$(get_version $version)
     echo "version in ThisBuild := \"$new_version\"" > version.sbt
