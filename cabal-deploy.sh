@@ -30,12 +30,10 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then
       if [ -f *.cabal ]; then
           # find the default form of the cabal version string.
           version=`grep -E -o "version:\W+[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" *.cabal | cut -d':' -f 2`
-          # trim the version string.
-          version=${${version##+( )}%%+( )}
           filename="`basename "$artifactPath"`"
           ts=`date "+%Y%m%d%H%M%S"`
           commish=`git rev-parse --short HEAD`
-          version="$version-$ts-$commish"
+          version=`echo "$version-$ts-$commish" | sed -e "s/[[:space:]]//g"`
       else
           echo "Could not find *.cabal file."
           exit 1

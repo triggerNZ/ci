@@ -26,12 +26,6 @@ echo "Installing GHC, Cabal and common libraries..."
 brew update
 brew install ghc cabal-install icu4c
 
-mkdir -p $HOME/.cabal
-cat > $HOME/.cabal/config <<EOF
-extra-lib-dirs:     /usr/local/opt/icu4c/lib
-extra-include-dirs: /usr/local/opt/icu4c/include
-EOF
-
 cabal update
 
 cat > $TRAVIS_BUILD_DIR/ci/curl.credentials <<EOF
