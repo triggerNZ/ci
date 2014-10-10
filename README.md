@@ -15,8 +15,8 @@ Travis Setup
 1. Enable the build by `travis enable -r [name]`.
 
 
-Example
--------
+Scala Example
+-------------
 
 ```
 language: scala
@@ -41,3 +41,25 @@ env:
   - secure: ...
   - secure: ...
 ```
+
+Haskell OS X Example
+--------------------
+
+```
+# needed to use the os x build agent.
+language: objective-c
+
+os:
+  - osx
+
+install:  
+- git clone https://github.com/CommBank/ci.git
+- chmod ugo+x  ci/*
+- ci/cabal-osx-setup.sh
+
+script:
+- cabal install
+- ci/cabal-deploy.sh dist/build/codetroll/codetroll ext-releases-local au/com/cba/omnia/codetroll
+
+```
+
