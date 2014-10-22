@@ -16,7 +16,7 @@
 
 # sbt-deploy-to.sh targetRepository [ project1, project2, ... ]
 #
-#   Uses sbt to deploy artifacts to the chosen target repository. Optionally.
+#   Uses sbt to deploy artifacts to the chosen target repository. Optionally,
 #   projects can be named explicitly in order that sbt deploy each of them
 #   to the chosen repository.
 #
