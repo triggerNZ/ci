@@ -33,7 +33,7 @@ install:
 - ci/sbt-setup-version.sh
 script:
 - sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ';  project all; test; package; project
-  example; assembly; project tools; assembly' && ci/sbt-deploy.sh && ci/gh-pages.sh
+  example; assembly; project tools; assembly' && ci/sbt-deploy-to.sh ext-releases-local && ci/gh-pages.sh
 after_script:
 - rm -rf ci
 env:
