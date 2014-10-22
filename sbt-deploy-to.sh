@@ -14,7 +14,7 @@
 
 #!/bin/bash
 
-# sbt-deploy-to.sh targetRepository [ project1, project2, ... ]
+# sbt-deploy-to.sh targetRepository [ project1 project2 ... ]
 #
 #   Uses sbt to deploy artifacts to the chosen target repository. Optionally,
 #   projects can be named explicitly in order that sbt deploy each of them
