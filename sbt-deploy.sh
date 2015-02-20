@@ -14,6 +14,8 @@
 
 #!/bin/bash
 
+source settings.sh
+
 set -e
 set -u
 set -v
@@ -27,7 +29,7 @@ echo "  deployed to a non-public location. Hence, for the purposes of uniformity
 echo "  sbt-deploy-to.sh, has been created that requires a target repository to be explicitly"
 echo "  specified."
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && ( $TRAVIS_BRANCH == "master"  || $TRAVIS_BRANCH == "CDH5" ) ]]; then
+if [[ $TRAVIS_PULL_REQUEST == "false" && isReleaseBranch $TRAVIS_BRANCH ]]; then
     if [ $# -eq 0 ]; then
         echo "DEPRECATION MIGRATION: this script can be replaced by: sbt-deploy-to.sh ext-releases-local"
         sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ';set publishTo in ThisBuild := Some("commbank-releases" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local"); set publishMavenStyle in ThisBuild  := true; publish'
@@ -39,5 +41,5 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && ( $TRAVIS_BRANCH == "master"  || $TRAVI
         done
     fi
 else
-    echo "Not on master. Nothing to deploy"
+    echo "Not a release branch (${releaseBranches[@]}). Nothing to deploy."
 fi

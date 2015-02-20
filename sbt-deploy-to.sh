@@ -25,11 +25,13 @@
 #   projectN - a project name for sbt to deploy. If this is omitted, the
 #              default (top-level) project is deployed.
 
+source settings.sh
+
 set -e
 set -u
 set -v
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && ( $TRAVIS_BRANCH == "master" || $TRAVIS_BRANCH == "CDH5" ) ]]; then
+if [[ $TRAVIS_PULL_REQUEST == "false" && isReleaseBranch $TRAVIS_BRANCH ]]; then
     if [ $# -eq 0 ]; then
         echo "Please provide a target repository and an optional list of projects to deploy."
         exit 1
@@ -50,5 +52,5 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && ( $TRAVIS_BRANCH == "master" || $TRAVIS
         fi
     fi
 else
-    echo "Not on master or CDH5 branches. Nothing to deploy."
+    echo "Not a release branch (${releaseBranches[@]}). Nothing to deploy."
 fi
