@@ -20,7 +20,7 @@ set -e
 set -u
 set -v
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && isReleaseBranch $TRAVIS_BRANCH ]]; then
+if [[ $TRAVIS_PULL_REQUEST == "false" && $(isReleaseBranch $TRAVIS_BRANCH) -eq 0 ]]; then
     if [ $# -eq 0 ]; then
         sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ';set publishTo in ThisBuild := Some("commbank-releases-ivy" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local-ivy"); set publishMavenStyle in ThisBuild  := false; publish'
     else

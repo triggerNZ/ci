@@ -31,7 +31,7 @@ set -e
 set -u
 set -v
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && isReleaseBranch $TRAVIS_BRANCH ]]; then
+if [[ $TRAVIS_PULL_REQUEST == "false" && $(isReleaseBranch $TRAVIS_BRANCH) -eq 0 ]]; then
     if [ $# -eq 0 ]; then
         echo "Please provide a target repository and an optional list of projects to deploy."
         exit 1
