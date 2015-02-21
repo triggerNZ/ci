@@ -52,5 +52,5 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && $(isReleaseBranch $TRAVIS_BRANCH) -eq 0
         fi
     fi
 else
-    echo "Not a release branch (${releaseBranches[@]}). Nothing to deploy."
+    echo "Not a release branch. Nothing to deploy."
 fi
