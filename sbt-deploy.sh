@@ -14,11 +14,13 @@
 
 #!/bin/bash
 
-source settings.sh
-
 set -e
 set -u
 set -v
+
+readonly location="$$( cd $$(dirname $$0) && pwd -P )"
+
+source $location/settings.sh
 
 # a warning indicating that this script is deprecated in favour of sbt-deploy-to.sh
 echo "WARNING: the sbt-deploy.sh CI script is deprecated; please use sbt-deploy-to.sh instead."

@@ -25,11 +25,13 @@
 #   projectN - a project name for sbt to deploy. If this is omitted, the
 #              default (top-level) project is deployed.
 
-source settings.sh
-
 set -e
 set -u
 set -v
+
+readonly location="$$( cd $$(dirname $$0) && pwd -P )"
+
+source $location/settings.sh
 
 if [[ $TRAVIS_PULL_REQUEST == "false" && $(isReleaseBranch $TRAVIS_BRANCH) -eq 0 ]]; then
     if [ $# -eq 0 ]; then
