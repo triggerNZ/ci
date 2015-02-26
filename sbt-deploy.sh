@@ -18,7 +18,7 @@ set -e
 set -u
 set -v
 
-readonly location="$$( cd $$(dirname $$0) && pwd -P )"
+readonly location="$( cd $(dirname $0) && pwd -P )"
 
 source $location/settings.sh
 
