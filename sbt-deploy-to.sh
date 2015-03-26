@@ -33,7 +33,12 @@ readonly location="$( cd $(dirname $0) && pwd -P )"
 
 source $location/settings.sh
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && $(isReleaseBranch $TRAVIS_BRANCH) -eq 0 ]]; then
+set +e
+isReleaseBranch $TRAVIS_BRANCH
+IS_RELEASE=$?
+set -e
+
+if [[ $TRAVIS_PULL_REQUEST == "false" && $IS_RELEASE -eq 0 ]]; then
     if [ $# -eq 0 ]; then
         echo "Please provide a target repository and an optional list of projects to deploy."
         exit 1

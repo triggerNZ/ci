@@ -21,7 +21,12 @@ readonly location="$( cd $(dirname $0) && pwd -P )"
 
 source $location/settings.sh
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && $(isReleaseBranch $TRAVIS_BRANCH) -eq 0 ]]; then
+set +e
+isReleaseBranch $TRAVIS_BRANCH
+IS_RELEASE=$?
+set -e
+
+if [[ $TRAVIS_PULL_REQUEST == "false" && $IS_RELEASE -eq 0 ]]; then
     if [ $# -eq 0 ]; then
         sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ';set publishTo in ThisBuild := Some("commbank-releases-ivy" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local-ivy"); set publishMavenStyle in ThisBuild  := false; publish'
     else
