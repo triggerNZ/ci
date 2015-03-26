@@ -5,18 +5,22 @@ Scripts used for Continuous Integration
 
 
 Travis Setup
-============
+==========
 
-1. Add a `.travis.yml` file to the top level directory of the project. See some of the other projects for a sample one.
-1. Download the travis client. https://github.com/travis-ci/travis.rb.
-1. Login. `travis login --pro` or `travis login --org`.
-1. Add the encrypted artifactory password. By running this command in the same directory as `.travis.yml`. `travis encrypt 'ARTIFACTORY_PASSWORD=...'`.
-1. [Optional to publish documentation] Add the encrypted github password. By running this command in the same directory as `.travis.yml`. `travis encrypt 'GH_PASSWORD=...'`.
-1. Enable the build by `travis enable -r [name]`.
+1. Create a `.travis.yml` file in the top level directory of the project. Use some of the other projects' `.travis.yml` 
+   file as a template.
+2. Install the travis client. Instructions are available at https://github.com/travis-ci/travis.rb.
+3. Login. `travis login --pro` or `travis login --org`.
+4. From project folder (same directory as `.travis.yml`), enable your project with Travis CI by running the command 
+   `travis enable -r`.
+5. Add the encrypted artifactory password. By running this command in the same directory as `.travis.yml`. `travis 
+   encrypt 'ARTIFACTORY_PASSWORD=...'`.
+6. [Optional to publish documentation] Add the encrypted github password. By running this command in the same directory 
+   as `.travis.yml`. `travis encrypt 'GH_PASSWORD=...'`.
 
 
 Scala Example
--------------
+--------------------
 
 ```
 language: scala
