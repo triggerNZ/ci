@@ -12,11 +12,12 @@ Travis Setup
 2. Install the travis client. Instructions are available at https://github.com/travis-ci/travis.rb.
 3. Login. `travis login --pro` or `travis login --org`.
 4. From project folder (same directory as `.travis.yml`), enable your project with Travis CI by running the command 
-   `travis enable -r`.
+   `travis enable --pro` or `travis enable --org`.
 5. Add the encrypted artifactory password. By running this command in the same directory as `.travis.yml`. `travis 
-   encrypt 'ARTIFACTORY_PASSWORD=...'`.
-6. [Optional to publish documentation] Add the encrypted github password. By running this command in the same directory 
-   as `.travis.yml`. `travis encrypt 'GH_PASSWORD=...'`.
+   encrypt ARTIFACTORY_PASSWORD=...`.
+6. [Optional to publish documentation] Create a branch called `gh-pages` for the project and push it to github. 
+   Then add the encrypted github password by running this command in the same directory as `.travis.yml`. 
+   `travis encrypt GH_PASSWORD=...`.
 
 
 Scala Example
