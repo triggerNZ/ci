@@ -39,12 +39,12 @@ set -e
 if [[ $TRAVIS_PULL_REQUEST == "false" && $IS_RELEASE -eq 0 ]]; then
     if [ $# -eq 0 ]; then
         echo "DEPRECATION MIGRATION: this script can be replaced by: sbt-deploy-to.sh ext-releases-local"
-        sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ';set publishTo in ThisBuild := Some("commbank-releases" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local"); set publishMavenStyle in ThisBuild  := true; publish'
+        sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ';set publishTo in ThisBuild := Some("commbank-releases" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local"); set publishMavenStyle in ThisBuild  := true; + publish'
     else
         echo "DEPRECATION MIGRATION: this script can be replaced by: sbt-deploy-to.sh ext-releases-local" $@ 
         for project in $@; do
             echo "Publishing $project"
-            sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ";project $project; set publishTo in ThisBuild := Some(\"commbank-releases\" at \"http://commbank.artifactoryonline.com/commbank/ext-releases-local\"); set publishMavenStyle in ThisBuild  := true; publish"
+            sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ";project $project; set publishTo in ThisBuild := Some(\"commbank-releases\" at \"http://commbank.artifactoryonline.com/commbank/ext-releases-local\"); set publishMavenStyle in ThisBuild  := true; + publish"
         done
     fi
 else

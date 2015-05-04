@@ -50,11 +50,11 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && $IS_RELEASE -eq 0 ]]; then
         projects=${*:2}
         if [ $# -eq 1 ]; then
             echo "Publishing to repository $repository"
-            sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci "; $publishTo; $publishMavenStyle; publish"
+            sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci "; $publishTo; $publishMavenStyle; + publish"
         else
             for project in $projects; do
                 echo "Publishing $project to repository $repository"
-                sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ";project $project; $publishTo; $publishMavenStyle; publish"
+                sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ";project $project; $publishTo; $publishMavenStyle; + publish"
             done
         fi
     fi
