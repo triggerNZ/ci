@@ -9,7 +9,7 @@ Travis Setup
 
 1. Create a `.travis.yml` file in the top level directory of the project. Use some of the other projects' `.travis.yml` 
    file as a template.
-2. Install the travis client. Instructions are available at https://github.com/travis-ci/travis.rb.
+2. Install the travis client. Instructions are available at https://github.com/travis-ci/travis.rb. **Please be aware that the installation and usage of the travis client often result in network and SSL Errors from within the office network (including wifi). Tethering to  a 4G device is one workaround for this.**
 3. Login. `travis login --pro` or `travis login --org`.
 4. From project folder (same directory as `.travis.yml`), enable your project with Travis CI by running the command 
    `travis enable --pro` or `travis enable --org`.
