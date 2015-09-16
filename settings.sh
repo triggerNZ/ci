@@ -16,7 +16,7 @@
 
 # Common CI settings
 # Branches for which we should do a release
-releaseBranches=("master" "CDH5" "CDH5V1" "CDH5_new_deps" "realtime_demo")
+releaseBranches=("master" "CDH5" "CDH5V1" "CDH5_new_deps" "realtime_patch")
 
 # Checks if an array contains the specified element
 # Usage: containsElement "CDH5" ${release_branches[@]}
