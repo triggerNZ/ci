@@ -24,7 +24,9 @@
 #                      (eg. ext-releases-local or libs-releases-local)
 #   projectN - a project name for sbt to deploy. If this is omitted, the
 #              default (top-level) project is deployed.
-
+#
+#   Please see settings.sh for a description of how to set which branches
+#   are released (i.e. actually published to artifactory).
 set -e
 set -u
 set -v
@@ -60,4 +62,7 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && $IS_RELEASE -eq 0 ]]; then
     fi
 else
     echo "Not a release branch. Nothing to deploy."
+    echo "To deploy this branch ($TRAVIS_BRANCH), add it to the RELEASE_BRANCHES environment variable:"
+    echo "  travis env set RELEASE_BRANCHES ($TRAVIS_BRANCH ${RELEASE_BRANCHES[@]})"
+    echo "(Or, alternatively, set it using the Travis web interface.)"
 fi

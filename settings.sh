@@ -15,11 +15,17 @@
 #!/bin/bash
 
 # Common CI settings
-# Branches for which we should do a release
-releaseBranches=("master" "CDH5" "CDH5V1" "CDH5_new_deps" "realtime_patch")
+
+# The environment variable RELEASE_BRANCHES controls which branches are released
+# (ie. published to Artifactory). This variable should be set (in Travis) to an
+# array of branch names; for example:
+#   RELEASE_BRANCHES=("CDH5" "realtime")
+# The "master" branch is included automatically. The variable can be set using
+# the Travis web interface or the CLI app:
+#   travis env set RELEASE_BRANCHES ("CDH5" "realtime")
 
 # Checks if an array contains the specified element
-# Usage: containsElement "CDH5" ${release_branches[@]}
+# Usage: containsElement "CDH5" ${RELEASE_BRANCHES[@]}
 containsElement () {
     local e
     for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
@@ -29,6 +35,6 @@ containsElement () {
 # Checks if the specified branch is a release branch
 # Usage: isReleaseBranch "CDH5"
 isReleaseBranch () {
-    containsElement $1 ${releaseBranches[@]}
+    masterAndReleaseBranches=("master" "${RELEASE_BRANCHES[@]}")
+    containsElement $1 ${masterAndReleaseBranches[@]}
 }
-
