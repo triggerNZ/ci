@@ -19,6 +19,20 @@ Travis Setup
    Then add the encrypted github password by running this command in the same directory as `.travis.yml`. 
    `travis encrypt GH_PASSWORD=...`.
 
+Publishing a Branch to Artifactory
+----------------------------------
+
+If you are using the `sbt-deploy-to.sh` script, it will attempt to publish the `master` branch of your 
+project to Artifactory automatically. If you would like to publish any other branches (for testing purposes,
+for example), you can add them as a space-separated string to the `RELEASE_BRANCHES` environment variable.
+For example, to publish branches named `CDH5` and `realtime` *in addition to* `master`, you would set 
+`RELEASE_BRANCHES` to `"CDH5 realtime"`.
+
+You can set `RELEASE_BRANCHES` via the Travis web UI (https://docs.travis-ci.com/user/environment-variables/#Defining-Variables-in-Repository-Settings), or
+via the command line Travis client:
+```
+travis env set RELEASE_BRANCHES "CDH5 realtime"
+```
 
 Scala Example
 --------------------
