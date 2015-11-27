@@ -61,16 +61,20 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && $IS_RELEASE -eq 0 ]]; then
         fi
     fi
 else
-    # format the string describing the added branch nicely
-    read -a branchesArray <<< "${RELEASE_BRANCHES-}"
-    if [ ${#branchesArray[@]} -eq 0 ]; then
-        addedBranch="\"$TRAVIS_BRANCH\""
-    else
-        addedBranch="\"$TRAVIS_BRANCH ${branchesArray[@]-}\""
-    fi
-    # tell the user what to do if they want their branch deployed
     echo "Not a release branch. Nothing to deploy."
-    echo "To deploy this branch ($TRAVIS_BRANCH), add it to the RELEASE_BRANCHES environment variable:"
-    echo "  travis env set RELEASE_BRANCHES $addedBranch"
-    echo "(Or, alternatively, set it using the Travis web interface.)"
+    if [[ $TRAVIS_PULL_REQUEST != "false" ]]; then
+        echo "Travis has marked this branch as a Pull Request, so it will not be deployed to Artifactory."
+    else
+        # format the string describing the added branch nicely
+        read -a branchesArray <<< "${RELEASE_BRANCHES-}"
+        if [ ${#branchesArray[@]} -eq 0 ]; then
+            addedBranch="\"$TRAVIS_BRANCH\""
+        else
+            addedBranch="\"$TRAVIS_BRANCH ${branchesArray[@]-}\""
+        fi
+        # tell the user what to do if they want their branch deployed
+        echo "To deploy this branch ($TRAVIS_BRANCH), add it to the RELEASE_BRANCHES environment variable:"
+        echo "  travis env set RELEASE_BRANCHES $addedBranch"
+        echo "(Or, alternatively, set it using the Travis web interface.)"
+    fi
 fi
