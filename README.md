@@ -15,9 +15,12 @@ Travis Setup
    `travis enable --pro` or `travis enable --org`.
 5. Add the encrypted artifactory password. By running this command in the same directory as `.travis.yml`. `travis 
    encrypt ARTIFACTORY_PASSWORD=...`.
-6. [Optional to publish documentation] Create a branch called `gh-pages` for the project and push it to github. 
-   Then add the encrypted github password by running this command in the same directory as `.travis.yml`. 
-   `travis encrypt GH_PASSWORD=...`.
+6. [Optional to publish documentation] **For public repos only** Create a branch called `gh-pages` for the project and push it to github. Then add the private key for omnia-bamboo as an encrypted file.
+   1. Get the private key
+   1. Create a folder in the repo `.travis`
+   1. Run the command `travis encrypt-file <private-key> --add`
+   1. `travis encrypt-file <path-private-key> .travis/deploy-key.enc -w .travis/deploy-key --add`
+   1. For sbt builds add the `ci/sbt-gh-pages-ssh.sh` to the build commands.
 
 Publishing a Branch to Artifactory
 ----------------------------------
@@ -52,7 +55,7 @@ install:
 - ci/sbt-setup-version.sh
 script:
 - sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci ';  project all; test; package; project
-  example; assembly; project tools; assembly' && ci/sbt-deploy-to.sh ext-releases-local && ci/gh-pages.sh
+  example; assembly; project tools; assembly' && ci/sbt-deploy-to.sh ext-releases-local && ci/sbt-gh-pages-ssh.sh
 after_script:
 - rm -rf ci
 env:
