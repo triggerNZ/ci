@@ -18,8 +18,7 @@ Travis Setup
 6. [Optional to publish documentation] **For public repos only** Create a branch called `gh-pages` for the project and push it to github. Then add the private key for omnia-bamboo as an encrypted file.
    1. Get the private key
    1. Create a folder in the repo `.travis`
-   1. Run the command `travis encrypt-file <private-key> --add`
-   1. `travis encrypt-file <path-private-key> .travis/deploy-key.enc -w .travis/deploy-key --add`
+   1. `travis encrypt-file <path-private-key> .travis/deploy-key.enc -w .travis/deploy-key.pem --add`
    1. For sbt builds add the `ci/sbt-gh-pages-ssh.sh` to the build commands.
 
 Publishing a Branch to Artifactory
