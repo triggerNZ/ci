@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #   Copyright 2016 Commonwealth Bank of Australia
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,8 +13,6 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
-#!/bin/bash
 
 set -e
 
@@ -44,7 +44,7 @@ status=$(curl --silent --output /dev/null --write-out "%{http_code}" \
 
 if [ "$status" = "404" ]; then
 
-    if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+    if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
         echo "Uploading '$ARTIFACT_NAME':"
         curl --silent --fail \
             -H "$ARTIFACTORY_AUTH" \
