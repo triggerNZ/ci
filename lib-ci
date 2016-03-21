@@ -1,0 +1,112 @@
+#!/bin/bash
+#   Copyright 2014 Commonwealth Bank of Australia
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# Library functions for CI
+
+set -o nounset
+
+# Determine the current CI environment
+function CI_Env_Get() {
+    if [ "$TRAVIS" = "true" ]; then
+        CI_SYSTEM=TRAVIS
+    elif [ "$DRONE" = "true" ]; then
+        CI_SYSTEM=DRONE
+    else
+        echo "CI system could not be identified." 1>&2
+        exit 1
+    fi
+    echo $CI_SYSTEM
+}
+
+# Export CI environment to the common format
+function CI_Env_Adapt() {
+    local CI_SYSTEM=$1
+
+    case $CI_SYSTEM in
+    TRAVIS)
+        CI_NAME=travis
+        CI_REPO=$TRAVIS_REPO_SLUG
+        CI_BRANCH=$TRAVIS_BRANCH
+        CI_COMMIT=$TRAVIS_COMMIT
+        CI_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
+        CI_PULL_REQUEST=$TRAVIS_PULL_REQUEST
+        CI_JOB_NUMBER=$TRAVIS_JOB_NUMBER
+        CI_BUILD_DIR=$TRAVIS_BUILD_DIR
+        CI_BUILD_URL="https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
+        CI_TAG=$TRAVIS_TAG
+        ;;
+    DRONE)
+        CI_NAME=drone
+        CI_REPO=$DRONE_REPO
+        CI_BRANCH=$DRONE_BRANCH
+        CI_COMMIT=$DRONE_COMMIT
+        CI_BUILD_NUMBER=$DRONE_BUILD_NUMBER
+        CI_PULL_REQUEST=$DRONE_PULL_REQUEST
+        CI_JOB_NUMBER=$DRONE_JOB_NUMBER
+        CI_BUILD_DIR=$DRONE_BUILD_DIR
+        CI_BUILD_URL=$DRONE_BUILD_URL
+        CI_TAG=$DRONE_TAG
+        ;;
+    *)
+        echo "CI system could not be identified" 1>&2
+        exit 1
+        ;;
+    esac
+}
+
+# Dump the CI environment to stdout
+function CI_Env_Dump() {
+    CI_Env_Adapt $(CI_Env_Get)
+    echo "CI_NAME=$CI_NAME"
+    echo "CI_REPO=$CI_REPO"
+    echo "CI_BRANCH=$CI_BRANCH"
+    echo "CI_COMMIT=$CI_COMMIT"
+    echo "CI_BUILD_NUMBER=$CI_BUILD_NUMBER"
+    echo "CI_PULL_REQUEST=$CI_PULL_REQUEST"
+    echo "CI_JOB_NUMBER=$CI_JOB_NUMBER"
+    echo "CI_BUILD_DIR=$CI_BUILD_DIR"
+    echo "CI_BUILD_URL=$CI_BUILD_URL"
+    echo "CI_TAG=$CI_TAG"
+}
+
+# Get a version number based on the Omnia standard:
+# major.minor.path-commish-timestamp for master branch
+# major.minor.path-commish-timestamp-PRNN for pull request NN
+# major.minor.path-commish-timestamp-branchname for branch branchname.
+# Expects the source version number to be input.
+function Version_Get() {
+    CI_Env_Adapt $(CI_Env_Get)
+
+    local source_version=$(echo "$1" | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+    if [ -z $source_version ]; then
+        echo "Bad semantic version number. Version contents: $1" 1>&2
+        exit 1
+    fi
+
+    local branch=$CI_BRANCH
+    local ts=$(date "+%Y%m%d%H%M%S")
+    local commitish=${CI_COMMIT:0:7}
+    local version="$source_version-$ts-$commitish"
+    
+    if [ "$CI_PULL_REQUEST" != "false" ] && [ ! -z $CI_PULL_REQUEST ]; then
+        echo "$version-PR$CI_PULL_REQUEST"
+    elif [ $CI_BRANCH == "master" ]; then
+        echo "$version"
+    else
+        echo "$version-$branch"
+    fi
+}
+
+set +o nounset
