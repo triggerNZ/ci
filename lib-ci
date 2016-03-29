@@ -109,4 +109,19 @@ function Version_Get() {
     fi
 }
 
+# Check if a given input (argument 1) is in the list of arguments passed that
+# succeed it. Example usage: Array_Contains "needle" "${HAYSTACK[@]}"
+# Returns 0 if the value is found, 1 if not.
+Array_Contains () {
+    local seeking="$1"; shift
+    local in=1
+    for element; do
+        if [[ "$element" == "$seeking" ]]; then
+            in=0
+            break
+        fi
+    done
+    echo $in
+}
+
 set +o nounset
