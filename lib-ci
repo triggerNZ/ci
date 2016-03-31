@@ -109,6 +109,21 @@ function Version_Get() {
     fi
 }
 
+# Checks if we are on a release branch.
+# Returns 0 iff we are on a release branch and 1 otherwise.
+# Master is a release branch by default.
+function Is_Release() {
+    CI_Env_Adapt $(CI_Env_Get)
+
+    if [ $CI_BRANCH == "master" ]; then
+      echo 0
+    elif [[ $CI_PULL_REQUEST == false && $(Array_Contains "$CI_BRANCH" "${RELEASE_BRANCHES[@]}") == 0 ]]; then
+        echo 0
+    else
+        echo 1
+    fi
+}
+
 # Check if a given input (argument 1) is in the list of arguments passed that
 # succeed it. Example usage: Array_Contains "needle" "${HAYSTACK[@]}"
 # Returns 0 if the value is found, 1 if not.

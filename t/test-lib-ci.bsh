@@ -40,3 +40,30 @@ echo $(Version_Get 1.0.0) > NEW_VERSION
 echo "NEW_VERSION=$(cat NEW_VERSION)"
 WVPASS grep -oP "1.0.0-\d{14}-adc83b1-PR1234" NEW_VERSION
 
+# is_release tests
+# On master
+export ${CI_SYSTEM}_BRANCH=master
+export ${CI_SYSTEM}_PULL_REQUEST=false
+echo "IS_RELEASE=$(Is_Release)"
+WVPASS [ $(Is_Release) == 0 ]
+
+# On another branch specified as release branch
+export ${CI_SYSTEM}_BRANCH=testbranch
+export ${CI_SYSTEM}_PULL_REQUEST=false
+export RELEASE_BRANCHES=("other" "testbranch")
+echo "IS_RELEASE=$(Is_Release)"
+WVPASS [ $(Is_Release) == 0 ]
+
+# On master and with specified release branches
+export ${CI_SYSTEM}_BRANCH=master
+export ${CI_SYSTEM}_PULL_REQUEST=false
+export RELEASE_BRANCHES=("testbranch")
+echo "IS_RELEASE=$(Is_Release)"
+WVPASS [ $(Is_Release) == 0 ]
+
+# Not on a release branch
+export ${CI_SYSTEM}_BRANCH=testbranch
+export ${CI_SYSTEM}_PULL_REQUEST=false
+unset RELEASE_BRANCHES
+echo "IS_RELEASE=$(Is_Release)"
+WVPASS [ $(Is_Release) == 1 ]
