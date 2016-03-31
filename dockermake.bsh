@@ -122,21 +122,20 @@ do_build() {
 do_push() {
     if [ $(Array_Contains "$CI_BRANCH" "${RELEASE_BRANCHES[@]}") != 0 ]; then
         echo "$CI_BRANCH is not a release branch. Not pushing." 1>&2
-        exit 1
-    fi
+    else
+        failflag=0
+        for i in ${TOBUILD[@]}; do
+            docker push ${PREFIX}${i}:${TAG}
+            if [ $? != 0 ]; then
+              echo "Error pushing image: Code $exit ${PREFIX}${i}:${TAG}" 1>&2
+              failflag=1
+            fi
+        done
 
-    failflag=0
-    for i in ${TOBUILD[@]}; do
-        docker push ${PREFIX}${i}:${TAG}
-        if [ $? != 0 ]; then
-            echo "Error pushing image: Code $exit ${PREFIX}${i}:${TAG}" 1>&2
-            failflag=1
+        if [ $failflag != 0 ]; then
+          echo "Some images failed to push. Failing build." 1>&2
+          exit 1
         fi
-    done
-    
-    if [ $failflag != 0 ]; then
-        echo "Some images failed to push. Failing build." 1>&2
-        exit 1
     fi
 }
 
