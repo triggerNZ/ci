@@ -120,7 +120,7 @@ do_build() {
 }
 
 do_push() {
-    if [ $(IS_RELEASE) != 0 ]; then
+    if [ $(Is_Release) != 0 ]; then
         echo "$CI_BRANCH is not a release branch. Not pushing." 1>&2
     else
         failflag=0
