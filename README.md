@@ -2,6 +2,7 @@ ci
 ==
 
 [![Build Status](https://travis-ci.org/CommBank/ci.svg?branch=master)](https://travis-ci.org/CommBank/ci)
+[![Coverage Status](https://coveralls.io/repos/github/wrouesnel/ci/badge.svg?branch=master)](https://coveralls.io/github/wrouesnel/ci?branch=master)
 
 Scripts used for Continuous Integration
 
