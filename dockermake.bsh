@@ -123,13 +123,16 @@ do_push() {
     if [ $(Is_Release) != 0 ]; then
         echo "$CI_BRANCH is not a release branch. Not pushing." 1>&2
     else
-        failflag=0
+        local image=${PREFIX}${i}:${TAG}
+        local failflag=0
         for i in ${TOBUILD[@]}; do
-            docker push ${PREFIX}${i}:${TAG}
-            if [ $? != 0 ]; then
-              echo "Error pushing image: Code $exit ${PREFIX}${i}:${TAG}" 1>&2
+            docker push $image
+            local exit=$?
+            if [ $exit != 0 ]; then
+              echo "Error pushing image: Code $exit $image" 1>&2
               failflag=1
             fi
+            docker rmi $image
         done
 
         if [ $failflag != 0 ]; then
