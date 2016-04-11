@@ -74,11 +74,12 @@ function CI_Env_Adapt() {
         parentUrl=$( dirname $(git remote -v | grep -e "^origin\t.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/') )
         owner=$( basename ${parentUrl} )
 
-        CI_REPO=${owner}/${repo}
-        CI_BRANCH=$( git rev-parse --abbrev-ref HEAD )
-        CI_COMMIT=$( git rev-parse HEAD )
+        # defaulting the value, to support Testing
+        CI_REPO=${NONE_REPO:-${owner}/${repo}}
+        CI_BRANCH=${NONE_BRANCH:-$( git rev-parse --abbrev-ref HEAD )}
+        CI_COMMIT=${NONE_COMMIT:-$( git rev-parse HEAD )}
         CI_BUILD_NUMBER=B$$
-        CI_PULL_REQUEST=
+        CI_PULL_REQUEST=${NONE_PULL_REQUEST:-false}
         CI_JOB_NUMBER=J$$
         CI_BUILD_DIR=$PWD
         CI_BUILD_URL=
@@ -115,6 +116,7 @@ DUMP
 # major.minor.path-commish-timestamp-PRNN for pull request NN
 # major.minor.path-commish-timestamp-branchname for branch branchname.
 # Expects the source version number to be input.
+#
 function Version_Get() {
     CI_Env_Adapt $(CI_Env_Get)
 

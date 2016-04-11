@@ -6,8 +6,11 @@
 
 ORIG_PATH=$PATH
 
-TMPDIR=$(mktemp -d -p . tmpdockermake-tmpXXXXXXXX)
-TMPPATH=$(mktemp -d -p . tmpdockermake-pathXXXXXXXX)
+# using a TMPDIR env var before mktemp makes it OSX/Linux portable
+tmpDIR1=$( TMPDIR=. mktemp -d tmpdockermake-tmpXXXXXXXX )
+tmpDIR2=$( TMPDIR=. mktemp -d tmpdockermake-pathXXXXXXXX )
+TMPDIR=${tmpDIR1}
+TMPPATH=${tmpDIR2}
 export PATH=$TMPPATH:$ORIG_PATH
 
 # Setup a fake docker path
@@ -82,7 +85,7 @@ WVPASSEQ "$(echo ${dockerArgs[@]})" "$(echo ${expected[@]})"
 
 # Test building images in the order they are specified on the command line
 # and also only the command line specified ones.
-TMPPATHORDER=$(mktemp -d -p . tmpdockermake-pathXXXXXXXX)
+TMPPATHORDER=$(  TMPDIR=. mktemp -d tmpdockermake-pathXXXXXXXX  )
 export PATH=$TMPPATHORDER:$ORIG_PATH
 
 # Pre-req

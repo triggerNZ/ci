@@ -3,18 +3,56 @@
 # Test framework
 . ./wvtest.sh
 
-tmpdir=$(mktemp -d -p .)
-echo "1.0.0" > $tmpdir/VERSION
-cd $tmpdir
+function test_smoke_test() {
+  
+  tmpdir=$( TMPDIR=. mktemp -d tmpdir-XXXXXX )
+  echo "1.0.0" > $tmpdir/VERSION
+  cd $tmpdir
+  
+  
+  versionOrig=$(cat VERSION)
+  # Check command works
+  WVPASS ../setup-version.bsh
+  # Check command modifies version
+  WVPASSNE "$(cat VERSION)" "$versionOrig"
+  # Check command fails properly
+  rm VERSION
+  WVFAIL ../setup-version.bsh
+  
+  cd ..
+  rm -rf $tmpdir
+  
+}
 
-versionOrig=$(cat VERSION)
-# Check command works
-WVPASS ../setup-version.bsh
-# Check command modifies version
-WVPASSNE "$(cat VERSION)" "$versionOrig"
-# Check command fails properly
-rm VERSION
-WVFAIL ../setup-version.bsh
+function test_branch_name {
 
-cd ..
-rm -rf $tmpdir
+  tmpdir=$( TMPDIR=. mktemp -d tmpdir-XXXXXX )
+  echo "1.0.0" > $tmpdir/VERSION
+  cd $tmpdir
+
+  # we are going to test a "xyz/abc" branch name
+  # to do this we need to trick setup-version to go the non-CI route
+  echo "1.0.0" > $tmpdir/VERSION
+  export _keep_TRAVIS=${TRAVIS}
+  export _keep_DRONE=${DRONE}
+  export TRAVIS=false
+  export DRONE=false
+  currentBranch=$( git rev-parse --abbrev-ref HEAD )
+  git checkout -b some/feature # <-- this branch name is what we are testing
+  WVPASS ../setup-version.bsh
+
+  # the VERSION should end with / have the branch with a _ replacement for the /
+  WVPASS cat VERSION | grep -e 'some_feature$'
+
+  # revert
+  export TRAVIS=${_keep_TRAVIS}
+  export DRONE=${_keep_DRONE}
+
+  # cleanup
+  cd .. &&  rm -rf $tmpdir
+  git checkout ${currentBranch}
+  git branch -d some/feature  # <-- remove old branch
+}
+
+test_smoke_test
+test_branch_name
