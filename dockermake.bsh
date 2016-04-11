@@ -122,6 +122,8 @@ do_build() {
 do_push() {
     if [ $(Is_Release) != 0 ]; then
         echo "$CI_BRANCH is not a release branch. Not pushing." 1>&2
+    else if [ "$CI_NAME" = "none" ]; then
+        echo "Will not push docker images outside of a CI system" 1>&2
     else
         failflag=0
         for i in ${TOBUILD[@]}; do

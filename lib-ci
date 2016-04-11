@@ -17,15 +17,24 @@
 
 set -o nounset
 
+# Library import helper
+function import() {
+    IMPORT_PATH="${BASH_SOURCE%/*}"
+    if [[ ! -d "$IMPORT_PATH" ]]; then IMPORT_PATH="$PWD"; fi
+    . $IMPORT_PATH/$1
+    [ $? != 0 ] && echo "$1 import error" 1>&2 && exit 1
+}
+
+import common
+
 # Determine the current CI environment
 function CI_Env_Get() {
-    if [ "$TRAVIS" = "true" ]; then
+    if [ "${TRAVIS:-}" = "true" ]; then
         CI_SYSTEM=TRAVIS
-    elif [ "$DRONE" = "true" ]; then
+    elif [ "${DRONE:-}" = "true" ]; then
         CI_SYSTEM=DRONE
     else
-        echo "CI system could not be identified." 1>&2
-        exit 1
+        CI_SYSTEM=NONE
     fi
     echo $CI_SYSTEM
 }
@@ -59,26 +68,46 @@ function CI_Env_Adapt() {
         CI_BUILD_URL=$DRONE_BUILD_URL
         CI_TAG=$DRONE_TAG
         ;;
+    NONE)
+        CI_NAME=none
+        repo=$( basename $(git remote -v | grep -e "^origin\t.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/') .git )
+        parentUrl=$( dirname $(git remote -v | grep -e "^origin\t.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/') )
+        owner=$( basename ${parentUrl} )
+
+        CI_REPO=${owner}/${repo}
+        CI_BRANCH=$( git rev-parse --abbrev-ref HEAD )
+        CI_COMMIT=$( git rev-parse HEAD )
+        CI_BUILD_NUMBER=B$$
+        CI_PULL_REQUEST=
+        CI_JOB_NUMBER=J$$
+        CI_BUILD_DIR=$PWD
+        CI_BUILD_URL=
+        CI_TAG=$( git describe --tags --abbrev=0 2> /dev/null || echo "" )
+        ;;
     *)
-        echo "CI system could not be identified" 1>&2
+        log "CI system could not be identified (${CI_NAME:-})" 1>&2
         exit 1
         ;;
     esac
 }
 
+
 # Dump the CI environment to stdout
 function CI_Env_Dump() {
     CI_Env_Adapt $(CI_Env_Get)
-    echo "CI_NAME=$CI_NAME"
-    echo "CI_REPO=$CI_REPO"
-    echo "CI_BRANCH=$CI_BRANCH"
-    echo "CI_COMMIT=$CI_COMMIT"
-    echo "CI_BUILD_NUMBER=$CI_BUILD_NUMBER"
-    echo "CI_PULL_REQUEST=$CI_PULL_REQUEST"
-    echo "CI_JOB_NUMBER=$CI_JOB_NUMBER"
-    echo "CI_BUILD_DIR=$CI_BUILD_DIR"
-    echo "CI_BUILD_URL=$CI_BUILD_URL"
-    echo "CI_TAG=$CI_TAG"
+    echo $CI_NAME
+cat <<DUMP 
+    CI_NAME=$CI_NAME
+    CI_REPO=$CI_REPO
+    CI_BRANCH=$CI_BRANCH
+    CI_COMMIT=$CI_COMMIT
+    CI_BUILD_NUMBER=$CI_BUILD_NUMBER
+    CI_PULL_REQUEST=$CI_PULL_REQUEST
+    CI_JOB_NUMBER=$CI_JOB_NUMBER
+    CI_BUILD_DIR=$CI_BUILD_DIR
+    CI_BUILD_URL=$CI_BUILD_URL
+    CI_TAG=$CI_TAG
+DUMP
 }
 
 # Get a version number based on the Omnia standard:
