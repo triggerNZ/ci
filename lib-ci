@@ -124,7 +124,7 @@ function Version_Get() {
         exit 1
     fi
 
-    local branch=$CI_BRANCH
+    local branch=${CI_BRANCH//[^[:alnum:]_.-]/_}
     local ts=$(date "+%Y%m%d%H%M%S")
     local commitish=${CI_COMMIT:0:7}
     local version="$source_version-$ts-$commitish"
