@@ -37,6 +37,13 @@ function test_branch_name {
   export TRAVIS=false
   export DRONE=false
   currentBranch=$( git rev-parse --abbrev-ref HEAD )
+  echo 1......
+  git remote -v 
+  echo 2......
+  git remote -v | grep -e "^origin\t.*fetch.$"
+  echo 3......
+  git remote -v | grep -e "^origin\t.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/'
+
   git checkout -b some/feature # <-- this branch name is what we are testing
   WVPASS ../setup-version.bsh
 
