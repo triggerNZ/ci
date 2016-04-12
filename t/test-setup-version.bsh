@@ -55,9 +55,10 @@ function test_branch_name {
   export DRONE=${_keep_DRONE}
 
   # cleanup
+  WVPASS git checkout ${currentBranch}
+  WVPASS git branch -d some/feature  # <-- remove old branch
+
   cd .. &&  rm -rf $tmpdir
-  git checkout ${currentBranch}
-  git branch -d some/feature  # <-- remove old branch
 }
 
 test_smoke_test
