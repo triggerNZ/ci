@@ -70,8 +70,8 @@ function CI_Env_Adapt() {
         ;;
     NONE)
         CI_NAME=none
-        repo=$( basename $(git remote -v | grep -e "^origin\t.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/') .git )
-        parentUrl=$( dirname $(git remote -v | grep -e "^origin\t.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/') )
+        repo=$( basename $(git remote -v | grep -e "^origin.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/') .git )
+        parentUrl=$( dirname $(git remote -v | grep -e "^origin.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/') )
         owner=$( basename ${parentUrl} )
 
         # defaulting the value, to support Testing
