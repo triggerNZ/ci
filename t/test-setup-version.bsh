@@ -30,6 +30,9 @@ function test_branch_name {
   echo "1.0.0" > $tmpdir/VERSION
   cd $tmpdir
   git init
+  git config --global user.email "some-ci@cba.com.au"
+  git config --global user.name "Some CI"
+  git remote add origin http://someserver/myuser/repo
   echo "test" > foo.txt &&  git add foo.txt VERSION &&  git commit -m "initial commit"
 
   # we are going to test a "xyz/abc" branch name
