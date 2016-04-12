@@ -40,9 +40,9 @@ function test_branch_name {
   echo 1......
   git remote -v 
   echo 2......
-  git remote -v | grep -e "^origin\t.*fetch.$"
+  git remote -v | grep -e "^origin\s.*fetch.$"
   echo 3......
-  git remote -v | grep -e "^origin\t.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/'
+  git remote -v | grep -e "^origin\s.*fetch.$" | sed 's/^origin\(.*\) (fetch)/\1/'
 
   git checkout -b some/feature # <-- this branch name is what we are testing
   WVPASS ../setup-version.bsh
