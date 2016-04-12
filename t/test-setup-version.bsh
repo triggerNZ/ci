@@ -32,7 +32,6 @@ function test_branch_name {
 
   # we are going to test a "xyz/abc" branch name
   # to do this we need to trick setup-version to go the non-CI route
-  echo "1.0.0" > $tmpdir/VERSION
   export _keep_TRAVIS=${TRAVIS}
   export _keep_DRONE=${DRONE}
   export TRAVIS=false
