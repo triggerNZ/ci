@@ -67,3 +67,8 @@ export ${CI_SYSTEM}_PULL_REQUEST=false
 unset RELEASE_BRANCHES
 echo "IS_RELEASE=$(Is_Release)"
 WVPASS [ $(Is_Release) == 1 ]
+
+# Test Hostname_From_Url
+WVPASS [ $(Hostname_From_Url "http://test/some/args?hello") = "test" ]
+WVPASS [ $(Hostname_From_Url "http://test.example.com/some/args?hello") = "test.example.com" ]
+WVPASS [ $(Hostname_From_Url "https://test2.ports.com:443/some/args?hello") = "test2.ports.com:443" ]

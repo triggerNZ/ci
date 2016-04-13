@@ -17,6 +17,25 @@
 
 set -o nounset
 
+# Echo command which outputs to stderr for high visibility on CI which does
+# colorization.
+function echoerr() {
+    echo "$@" 1>&2
+}
+
+# Parses a URL to extract the hostname
+function Hostname_From_Url() {
+    # Do we have a scheme?
+    scheme=$(echo $1 | grep -o '^\w*://')
+    if [ ! -z $scheme ]; then
+        # Get the hostname part.
+        echo $1 | cut -d'/' -f3
+    else
+        # Probably a bare hostname, but remove slashes and things just in case.
+        echo $1 | cut -d'/' -f1
+    fi
+}
+
 # Determine the current CI environment
 function CI_Env_Get() {
     if [ "$TRAVIS" = "true" ]; then
