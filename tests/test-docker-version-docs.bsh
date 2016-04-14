@@ -1,0 +1,24 @@
+#!/bin/bash
+# Test the sbt-ci-build-doc. To do this, we import a very simple sbt project
+# (included in this repository) and build documentation against it.
+
+# Test framework
+. ./wvtest.sh
+
+# Write out a dummy file of tags:
+cat << EOF > .pushed_images
+docker/test
+docker.domain/test
+docker.domain:4444/test
+EOF
+
+# Script should work on any branch
+WVPASS ./docker-version-docs.bsh $(cat .pushed_images)
+
+# Check the _site files are created (or force someone to justify why they're
+# changing.
+WVPASS [ -d "_site" ]
+WVPASS [ -e "_site/index.md" ]
+WVPASS [ -e "_site/version.json" ]
+
+rm .pushed_images
