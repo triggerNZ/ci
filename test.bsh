@@ -6,11 +6,9 @@ echo "Dumping CI environment..."
 CI_Env_Dump
 
 # Run the tests
-for i in $(find t -mindepth 1 -name 't*' -type f -print | sort); do
+for i in $(find tests -mindepth 1 -name 't*' -type f -print | sort); do
     bash $i
     if [ $? != 0 ]; then
         exit 1
     fi
 done
-
-
