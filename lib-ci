@@ -42,9 +42,11 @@ function CI_Env_Get() {
         CI_SYSTEM=TRAVIS
     elif [ "$DRONE" = "true" ]; then
         CI_SYSTEM=DRONE
+    elif [ ! -z "$ENABLE_LOCAL_CI" ]; then
+        echo "CI System could not be identified - assuming local." 1>&2
+        CI_SYSTEM=LOCAL
     else
-        echo "CI system could not be identified." 1>&2
-        exit 1
+        echo "CI System could not be identified." 1>&2
     fi
     echo $CI_SYSTEM
 }
@@ -78,8 +80,29 @@ function CI_Env_Adapt() {
         CI_BUILD_URL=$DRONE_BUILD_URL
         CI_TAG=$DRONE_TAG
         ;;
+    LOCAL)
+        if [ ! -z "$ENABLE_LOCAL_CI" ]; then
+            # This is here because we want monotonically increasing job and build
+            # numbers, but we have no real way to get them. Using the date like this
+            # is a good compromise for local use.
+            referenceTime=$(date +%Y%m%d%H%M%S)
+            CI_NAME=local
+            CI_REPO=$(dirname $(pwd))
+            CI_BRANCH=$(git symbolic-ref HEAD | cut -d'/' -f3-)
+            CI_COMMIT=$(git rev-parse HEAD)
+            CI_BUILD_NUMBER=$referenceTime
+            CI_PULL_REQUEST=
+            CI_JOB_NUMBER=$referenceTime
+            CI_BUILD_DIR=$(pwd)
+            CI_BUILD_URL=
+            CI_TAG=$(git name-rev --name-only --tags HEAD | sed 's/^undefined$//')
+        else
+            echo "CI System could not be identified. Failing." 1>&2
+            exit 1
+        fi
+        ;;
     *)
-        echo "CI system could not be identified" 1>&2
+        echo "CI System could not be identified. Failing." 1>&2
         exit 1
         ;;
     esac

@@ -68,6 +68,11 @@ unset RELEASE_BRANCHES
 echo "IS_RELEASE=$(Is_Release)"
 WVPASS [ $(Is_Release) == 1 ]
 
+# Local CI should be enabled when we enable the flag
+export ENABLE_LOCAL_CI=yes
+WVPASS CI_Env_Adapt "LOCAL"
+export ENABLE_LOCAL_CI=
+
 # Test Hostname_From_Url
 WVPASS [ $(Hostname_From_Url "http://test/some/args?hello") = "test" ]
 WVPASS [ $(Hostname_From_Url "http://test.example.com/some/args?hello") = "test.example.com" ]
