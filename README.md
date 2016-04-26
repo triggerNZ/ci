@@ -87,3 +87,18 @@ script:
 
 ```
 
+Principles
+==========
+
+These are some underlying principles for how we do CI and in particular how we design and utilise 
+these scripts.
+
+* In build configurations the building and unit testing of the code should not require any CI 
+  scripts and be expressed in a similar way that a user would run locally.
+* Our standard versioning approach is semantic version plus the commish plus the build time stamp.
+* We predominantly utilise our CI scripts to customise the deployment and publication process. This 
+  is custom to our environments and there is no expectation that the user will do a publish manually.
+* We use CI scripts to set up custom version for builds in a way that is transparent to the build
+  tooling. Users provide the semantic version in a way that is suitable for their particular tooling
+  and the CI scripts append the commish and time stamp at the beginning of the build.
+
