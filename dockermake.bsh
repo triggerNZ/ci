@@ -16,10 +16,6 @@
 # for which `docker push` should be allowed to run. By default it is set to
 # `master`
 # 
-# When pushing images, the script will note and write out the name of all images
-# which are successfully pushed. These are written to the dotfile .pushed_images
-# so they can be used to update the gh-pages branch.
-# 
 # Example Usage:
 # ./ci/dockermake.bsh build myimage1 myimage2 --build-arg=someval
 
@@ -47,8 +43,6 @@ IMAGE_REQUESTS=()
 TOBUILD=()
 # Images which were found as candidates to be built
 IMAGES=()
-# Pushed image path
-PUSHED_IMAGES_FILE=".pushed_images"
 
 # Check push parameters
 if [ -z $RELEASE_BRANCHES ]; then
@@ -100,68 +94,6 @@ if [ "$TAG" = "latest" ]; then
     exit 1
 fi
 
-do_pages() {
-  DOC_BRANCH=gh-pages
-  
-  if [ ! -z "$DISABLE_DOCS" ]; then
-    echo "Github pages document push disabled by DISABLE_DOCS" 1>&2
-    return
-  fi
-  
-  GIT_REMOTE=$(git remote -v | cut -f2 | cut -d' ' -f1 | head -n1)
-  if [ -z $GIT_REMOTE ]; then
-    echoerr "No git remote could be identified. Documentation build will not work."
-    return
-  fi
-
-  # Don't mess up .git dir branch state in real work dir - store where we were
-  # Only relevant for local testers.
-  ORIG_BRANCH=$(git symbolic-ref HEAD)
-  
-  # Make a site directory
-  mkdir _site
-
-  export GIT_DIR=$(pwd)/.git
-  export GIT_WORK_TREE=$(pwd)/_site
-
-  git symbolic-ref HEAD refs/heads/$DOC_BRANCH || exit 1
-
-  # Does gh-pages exist on the remote?
-  if ! git show-ref refs/remotes/$GIT_REMOTE/$DOC_BRANCH; then
-      # Create an empty branch.
-      echoerr "Warning: $DOC_BRANCH will be created (it did not exist on the remote)"
-  else
-      # Track the existent branch
-      echo "Checking out current $DOC_BRANCH"
-      git branch $DOC_BRANCH -f $GIT_REMOTE/$DOC_BRANCH || exit 1
-      
-      # Read the tree into the index so the build result is auto-available
-      git read-tree refs/heads/$DOC_BRANCH || exit 1
-  fi
-
-  # Update the documentation
-  cat << EOF > $GIT_WORK_TREE/index.md
----
-layout: page
-title: Docker Image Repository Versioning
-tagline: Versioning Information Page
-description: Current version of last built images from this repository.
----
-# Published Images
-This is the current listing of images published by this repository.
-This data is also available under `version.json` for programmatic consumption.
-EOF
-  for image_path in ${PUSHED_IMAGES[@]}; do
-    echo "* `$image_path`" >> $GIT_WORK_TREE/index.md
-  done
-  
-  git add -A || exit 1
-  git commit -m "CI automatic documentation ($CI_BUILD_URL)" || exit 1
-  
-  unset GIT_DIR
-  unset GIT_WORK_TREE
-}
-
 do_build() {
     # Discover proxy environment
     if [ -z $https_proxy ]; then
@@ -188,9 +120,6 @@ do_build() {
 }
 
 do_push() {
-    # Aggregate pushed images here so we can publish what we have to gh-pages
-    PUSHED_IMAGES=()
-
     if [ $(Is_Release) != 0 ]; then
         echo "$CI_BRANCH is not a release branch. Not pushing." 1>&2
     else
@@ -200,8 +129,6 @@ do_push() {
             if [ $? != 0 ]; then
               echo "Error pushing image: Code $exit ${PREFIX}${i}:${TAG}" 1>&2
               failflag=1
-            else
-              echo "${PREFIX}${i}:${TAG}" >> $PUSHED_IMAGES_FILE
             fi
         done
 
