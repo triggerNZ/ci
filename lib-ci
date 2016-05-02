@@ -186,12 +186,14 @@ Array_Contains () {
 # contents of <branch>. If [remote] is not specified, the current remote is
 # used (typically origin).
 # <subdirectory> is assumed to be related to the current working directory.
-# Usage: Publish_Subdirectory <branch> <subdirectory> <commit msg> [remote]
+# Usage: Publish_Subdirectory_To_Branch <branch> <subdirectory> <commit msg> [remote]
 Publish_Subdirectory_To_Branch() {
     local git_branch="$1"
-    local subdirectory="$2"
+    local input_directory="$2"
     local commit_msg="$3"
     local remote="$4"
+    
+    local directory="$(readlink -f $input_directory)"
 
     if [ -z "$remote" ]; then
         # Figure out a default remote, or fail.
@@ -207,6 +209,15 @@ Publish_Subdirectory_To_Branch() {
         exit 1
     fi
     
+    # Set git configuration if it is not already set.
+    if [ -z "$(git config --global user.email)" ]; then
+        git config --global user.email ci@ci
+    fi
+
+    if [ -z "$(git config --global user.name)" ]; then
+        git config --global user.name Publish_Subdirectory_To_Branch
+    fi
+    
     # Don't mess up .git dir branch state in real work dir - store where we were
     # Only relevant for local testers.
     ORIG_BRANCH=$(git symbolic-ref HEAD)
@@ -215,7 +226,7 @@ Publish_Subdirectory_To_Branch() {
     ORIG_GIT_WORK_TREE=$GIT_WORK_TREE
     
     export GIT_DIR=$(pwd)/.git
-    export GIT_WORK_TREE=$(pwd)/$subdirectory
+    export GIT_WORK_TREE=$directory
     
     git symbolic-ref HEAD refs/heads/$git_branch
     
