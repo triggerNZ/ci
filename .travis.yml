@@ -1,6 +1,10 @@
 language: ruby
 rvm:
 - 2.2.0
+cache:
+  directories:
+  - $HOME/.ivy2
+  - $HOME/.m2
 before_script:
 - gem install bashcov
 - gem install coveralls
