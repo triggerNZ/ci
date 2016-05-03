@@ -17,6 +17,7 @@ SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 
 # Testing the test fixtures
+ORIG_PWD=$(pwd)
 cd $SCRIPT_DIR/test-sbt-ci-build-doc
 
 ORIG_CI_BRANCH=$CI_BRANCH
@@ -24,7 +25,7 @@ ORIG_CI_BRANCH=$CI_BRANCH
 # We need to do some setup - namely, turning the test fixture root into a
 # git repository. sbt-ci-build-doc will then operate on this repo in a
 # subdirectory.
-git init || exit 1
+git init . || exit 1
 git config user.email "zbi+test@cba.com.au"
 git config user.name "WVTEST"
 git add -A || exit 1
@@ -32,7 +33,7 @@ git commit -m "Initial commit" || exit 1
 git symbolic-ref HEAD refs/heads/master || exit 1
 
 # Test that we fail when there is no git remote.
-export CI_BRANCH=master
+export FORCE_PUBLISH=yes
 WVFAIL ../../sbt-ci-build-doc.bsh "http://testroot" "http://testsourceroot"
 
 # Make a git remote to allow the script to find one
@@ -41,24 +42,7 @@ git remote add origin $(readlink -f $TMPREMOTE) || exit 1
 # This should now run correctly.
 WVPASS ../../sbt-ci-build-doc.bsh "http://testroot" "http://testsourceroot"
 
-ls -l
-
-#WVPASS [ -d "target/site" ]
-# Delete that directory
-#rm -rf "target/site"
-
-# Confirm we do nothing successfully when not master
-export CI_BRANCH=notmaster
-WVPASS ../../sbt-ci-build-doc.bsh "http://testroot" "http://testsourceroot"
-#WVPASS [ ! -d "target/site" ]
-
-# Confirm FORCE_DOCS works
-export CI_BRANCH=notmaster
-WVPASS ../../sbt-ci-build-doc.bsh "http://testroot" "http://testsourceroot"
-
-export CI_BRANCH=$ORIG_CI_BRANCH
-
 # Remove temporary directories
 rm -rf .gitkeep .git $TMPBASE $TMPREMOTE
 
-cd ../..
+cd $ORIG_PWD
