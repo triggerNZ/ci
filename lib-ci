@@ -23,6 +23,31 @@ function echoerr() {
     echo "$@" 1>&2
 }
 
+# The following set of hooks allow you to inline defer function and method calls
+# in bash until the script terminates. It *requires* a line like 
+# `trap "atexit_commands" INT TERM EXIT` in the body of the bash script in order to 
+# work. Functions are a stack, and are executed in reverse order.
+# Typical usage:
+# trap "atexit_commands ; exit 0" INT TERM EXIT
+# atexit echo "This is run at exit"
+export atexit_hooks=()
+function atexit() {
+    val=$(echo "$@")
+    atexit_hooks+=("$val")
+}
+
+function atexit_commands() {
+    if [ -z "$TEST_DEBUG" ]; then
+        echoerr "Running shutdown hooks..."
+        for ((i=${#atexit_hooks[@]}-1; i >=0 ; i--)); do
+            echoerr "${atexit_hooks[$i]}"
+            eval "${atexit_hooks[$i]}"
+            # Blank elements don't eval to anything, so are removed.
+            atexit_hooks[$i]='' 
+        done
+    fi
+}
+
 # Parses a URL to extract the hostname
 function Hostname_From_Url() {
     # Do we have a scheme?
