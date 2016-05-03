@@ -20,10 +20,13 @@
 #   to is always 'origin'.
 #
 #   Usage:
-#   ./ci/ci-publish-site.bsh <branch> <directory> <commit msg>
+#   ./ci/ci-publish-site.bsh <directory> [branch] [commit msg]
+#
+#   Branch defaults to "gh-pages", commit msg defaults to 
+#   "CI Documentation Update"
 #
 #   Example:
-#   ./ci/ci-publish-site.bsh gh-pages _site "Automatic Update"
+#   ./ci/ci-publish-site.bsh _site gh-pages "Automatic Update"
 #
 
 # Library import helper
@@ -38,28 +41,26 @@ import lib-ci
 
 CI_Env_Adapt $(CI_Env_Get)
 
-branch="$1"
-dir=$(readlink -f $2)
+dir=$(readlink -f $1)
+branch="$2"
 commit_msg="$3"
-
-if [ -z "$branch" ]; then
-    echoerr "Git branch not specified."
-    exit 1
-fi
 
 if [ -z "$dir" ]; then 
     echoerr "Directory cannot be blank."
     exit 1
 fi
 
-if [ -z "$commit_msg" ]; then
-    echoerr "Commit Message cannot be blank"
-    exit 1
-fi
-
 if [ ! -d "$dir" ]; then
     echoerr "$dir does not exist."
     exit 1
+fi
+
+if [ -z "$branch" ]; then
+    branch="gh-pages"
+fi
+
+if [ -z "$commit_msg" ]; then
+    commit_msg="CI Documentation Update"
 fi
 
 if [ ! -e VERSION ]; then

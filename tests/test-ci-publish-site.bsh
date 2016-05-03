@@ -35,22 +35,21 @@ cd $TMPBASE
 atexit cd $(pwd)
 
 # Check we fail when no VERSION
-WVFAIL ../ci-publish-site.bsh "gh-pages" "$TMPBASE/site" "Commit Msg"
+WVFAIL ../ci-publish-site.bsh "$TMPBASE/site" "gh-pages" "Commit Msg"
 
 # Check fail when empty VERSION
 touch VERSION
-WVFAIL ../ci-publish-site.bsh "gh-pages" "$TMPBASE/site" "Commit Msg"
+WVFAIL ../ci-publish-site.bsh "$TMPBASE/site" "gh-pages" "Commit Msg"
 
 # Should pass when a version file exists
 echo "1.0.0" >> VERSION
-WVPASS ../ci-publish-site.bsh "gh-pages" "$TMPBASE/site" "Commit Msg"
+WVPASS ../ci-publish-site.bsh "$TMPBASE/site" "gh-pages" "Commit Msg"
 
 # Check the we end up with something sensible in the base directory
 WVPASS [ -e "$TMPBASE/site/_config.yml" ]
 WVPASS grep 'releaseVersion' $TMPBASE/site/_config.yml
 
-# Do a bunch of WVFAIL tests for command line parsing
-WVFAIL ../ci-publish-site.bsh "gh-pages" "$TMPBASE/site" 
-WVFAIL ../ci-publish-site.bsh "gh-pages"
+# Do a bunch of WVFAIL tests for command line parsing 
+WVFAIL ../ci-publish-site.bsh nonexistent
 WVFAIL ../ci-publish-site.bsh
-WVFAIL ../ci-publish-site.bsh "gh-pages" nonexistent
+
