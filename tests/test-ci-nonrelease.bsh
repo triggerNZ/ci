@@ -1,0 +1,28 @@
+#!/bin/bash -u
+# Test the ci-release script.
+
+# Test framework
+. ./wvtest.sh
+
+. ./lib-ci
+
+# get_CI_env tests
+CI_SYSTEM=$(CI_Env_Get)
+
+TMPPATH=$(TMPDIR=. mktemp tmpdockermake-pathXXXXXXXX)
+rm $TMPPATH
+
+# Tests that the command not will be run on release branches
+export ${CI_SYSTEM}_BRANCH=master
+export ${CI_SYSTEM}_PULL_REQUEST=false
+WVFAIL test -e $TMPPATH
+WVPASS ./ci-nonrelease.bsh touch $TMPPATH
+WVFAIL test -e $TMPPATH
+
+
+# Tests that the command will not be run on release branches
+export ${CI_SYSTEM}_BRANCH=testbranch
+export ${CI_SYSTEM}_PULL_REQUEST=false
+WVPASS ./ci-nonrelease.bsh touch $TMPPATH
+WVPASS test -e $TMPPATH
+rm $TMPPATH
