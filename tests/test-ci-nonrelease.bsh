@@ -12,7 +12,7 @@ CI_SYSTEM=$(CI_Env_Get)
 TMPPATH=$(TMPDIR=. mktemp tmpdockermake-pathXXXXXXXX)
 rm $TMPPATH
 
-# Tests that the command not will be run on release branches
+# Tests that the command will not be run on release branches
 export ${CI_SYSTEM}_BRANCH=master
 export ${CI_SYSTEM}_PULL_REQUEST=false
 WVFAIL test -e $TMPPATH
@@ -20,7 +20,7 @@ WVPASS ./ci-nonrelease.bsh touch $TMPPATH
 WVFAIL test -e $TMPPATH
 
 
-# Tests that the command will not be run on release branches
+# Tests that the command will be run on non-release branches
 export ${CI_SYSTEM}_BRANCH=testbranch
 export ${CI_SYSTEM}_PULL_REQUEST=false
 WVPASS ./ci-nonrelease.bsh touch $TMPPATH
